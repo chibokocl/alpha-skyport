@@ -75,3 +75,13 @@ CREATE TABLE freight_services (
 
 CREATE INDEX idx_freight_service_type ON freight_services(service_type);
 CREATE INDEX idx_freight_active ON freight_services(is_active) WHERE is_active = TRUE;
+
+-- Trigger for version increment
+CREATE OR REPLACE FUNCTION increment_version()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.version = OLD.version + 1;
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
