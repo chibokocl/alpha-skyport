@@ -1,0 +1,10 @@
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/model/Country.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/repository/FreightServiceRepository.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/controller/CountryController.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/iam/repository/UserRepository.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/iam/controller/UserController.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/AlphaSkyportApplication.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/model/FreightService.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/repository/CountryRepository.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/iam/model/User.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/controller/FreightServiceController.java
