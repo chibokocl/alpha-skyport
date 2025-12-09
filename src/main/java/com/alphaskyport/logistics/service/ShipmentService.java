@@ -24,6 +24,7 @@ public class ShipmentService {
     private final TrackingNumberRepository trackingNumberRepository;
     private final ShipmentTrackingEventRepository trackingEventRepository;
     private final CapacityService capacityService;
+    private final NotificationService notificationService;
 
     @Transactional
     public Shipment createShipmentFromQuote(UUID quoteId, java.time.LocalDate pickupDate) {
@@ -74,6 +75,14 @@ public class ShipmentService {
         // Create initial tracking event
         createTrackingEvent(shipment, "pending", "Shipment created from quote", "system");
 
+        // Notify user
+        notificationService.enqueueNotification(
+                shipment.getUser(),
+                shipment,
+                "Shipment Created",
+                "Your shipment " + shipment.getTrackingNumber() + " has been created.",
+                "SHIPMENT_CREATED");
+
         return shipment;
     }
 
@@ -90,6 +99,14 @@ public class ShipmentService {
         shipmentRepository.save(shipment);
 
         createTrackingEvent(shipment, newStatus, description, source);
+
+        // Notify user
+        notificationService.enqueueNotification(
+                shipment.getUser(),
+                shipment,
+                "Shipment Update: " + newStatus,
+                "Your shipment " + shipment.getTrackingNumber() + " is now " + newStatus + ".",
+                "SHIPMENT_STATUS_UPDATE");
     }
 
     private void createTrackingEvent(Shipment shipment, String status, String description, String source) {
