@@ -23,9 +23,10 @@ public class ShipmentService {
     private final QuoteRepository quoteRepository;
     private final TrackingNumberRepository trackingNumberRepository;
     private final ShipmentTrackingEventRepository trackingEventRepository;
+    private final CapacityService capacityService;
 
     @Transactional
-    public Shipment createShipmentFromQuote(UUID quoteId) {
+    public Shipment createShipmentFromQuote(UUID quoteId, java.time.LocalDate pickupDate) {
         Quote quote = quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new RuntimeException("Quote not found"));
 
@@ -57,8 +58,12 @@ public class ShipmentService {
         shipment.setTotalCost(quote.getQuotedPrice());
         shipment.setAmountDue(quote.getQuotedPrice());
         shipment.setShipmentStatus("pending");
+        shipment.setEstimatedPickupDate(pickupDate);
 
         shipment = shipmentRepository.save(shipment);
+
+        // Reserve capacity
+        capacityService.reserveCapacity(shipment);
 
         // Update quote
         quote.setConvertedToShipmentId(shipment.getShipmentId());

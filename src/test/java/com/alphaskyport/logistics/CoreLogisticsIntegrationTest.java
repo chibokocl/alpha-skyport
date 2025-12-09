@@ -84,7 +84,8 @@ public class CoreLogisticsIntegrationTest {
         assertEquals("accepted", acceptedQuote.getQuoteStatus());
 
         // 4. Convert to Shipment
-        Shipment shipment = shipmentService.createShipmentFromQuote(acceptedQuote.getQuoteId());
+        Shipment shipment = shipmentService.createShipmentFromQuote(acceptedQuote.getQuoteId(),
+                java.time.LocalDate.now().plusDays(1));
 
         assertNotNull(shipment.getShipmentId());
         assertNotNull(shipment.getTrackingNumber());
