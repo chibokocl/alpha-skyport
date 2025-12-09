@@ -13,4 +13,8 @@ public interface ShipmentRepository extends JpaRepository<Shipment, UUID> {
     Optional<Shipment> findByTrackingNumber(String trackingNumber);
 
     List<Shipment> findByUser_UserId(UUID userId);
+
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("SELECT s FROM Shipment s WHERE s.shipmentId = :id")
+    Optional<Shipment> findByIdWithLock(UUID id);
 }

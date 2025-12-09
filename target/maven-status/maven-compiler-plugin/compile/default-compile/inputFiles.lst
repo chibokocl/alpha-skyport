@@ -8,6 +8,7 @@
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/service/CapacityService.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/model/TrackingNumber.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/iam/repository/UserRepository.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/service/PaymentService.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/model/Quote.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/repository/ShipmentRepository.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/iam/controller/UserController.java
@@ -21,5 +22,7 @@
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/model/ShipmentTrackingEvent.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/masterdata/model/Country.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/service/ShipmentService.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/repository/PaymentTransactionRepository.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/repository/TrackingNumberRepository.java
+/home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/model/PaymentTransaction.java
 /home/chiboko/alpha-skyport/src/main/java/com/alphaskyport/logistics/model/CapacityBooking.java
