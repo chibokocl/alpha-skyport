@@ -119,4 +119,17 @@ public class ShipmentService {
 
         trackingEventRepository.save(event);
     }
+
+    // Query methods
+    public java.util.Optional<Shipment> getShipmentById(UUID shipmentId) {
+        return shipmentRepository.findById(shipmentId);
+    }
+
+    public java.util.Optional<Shipment> getShipmentByTrackingNumber(String trackingNumber) {
+        return shipmentRepository.findByTrackingNumber(trackingNumber);
+    }
+
+    public java.util.List<Shipment> getShipmentsByUser(UUID userId) {
+        return shipmentRepository.findByUser_UserId(userId);
+    }
 }
