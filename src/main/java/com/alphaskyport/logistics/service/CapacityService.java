@@ -6,7 +6,6 @@ import com.alphaskyport.logistics.model.ShipmentReservation;
 import com.alphaskyport.logistics.repository.CapacityBookingRepository;
 import com.alphaskyport.logistics.repository.ShipmentReservationRepository;
 import com.alphaskyport.masterdata.model.FreightService;
-import com.alphaskyport.masterdata.repository.FreightServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

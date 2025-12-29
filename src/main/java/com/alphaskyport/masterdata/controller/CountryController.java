@@ -5,6 +5,8 @@ import com.alphaskyport.masterdata.repository.CountryRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.lang.NonNull;
+
 import java.util.List;
 
 @RestController
@@ -35,7 +37,10 @@ public class CountryController {
     }
 
     @PostMapping
+    @NonNull
     public Country createCountry(@RequestBody Country country) {
-        return countryRepository.save(country);
+        @SuppressWarnings("null")
+        Country saved = countryRepository.save(country);
+        return saved;
     }
 }

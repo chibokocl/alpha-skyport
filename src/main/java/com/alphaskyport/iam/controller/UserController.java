@@ -5,6 +5,8 @@ import com.alphaskyport.iam.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.lang.NonNull;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -19,13 +21,18 @@ public class UserController {
     }
 
     @PostMapping
+    @NonNull
     public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+        @SuppressWarnings("null")
+        User savedUser = userRepository.save(user);
+        return savedUser;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable UUID id) {
-        return userRepository.findById(id)
+        @SuppressWarnings("null")
+        java.util.Optional<User> user = userRepository.findById(id);
+        return user
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

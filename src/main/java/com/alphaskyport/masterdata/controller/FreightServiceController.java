@@ -2,8 +2,8 @@ package com.alphaskyport.masterdata.controller;
 
 import com.alphaskyport.masterdata.model.FreightService;
 import com.alphaskyport.masterdata.repository.FreightServiceRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -28,6 +28,8 @@ public class FreightServiceController {
     }
 
     @PostMapping
+    @NonNull
+    @SuppressWarnings("null")
     public FreightService createService(@RequestBody FreightService service) {
         return freightServiceRepository.save(service);
     }

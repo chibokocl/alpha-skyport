@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,6 +26,7 @@ public class ShipmentService {
     private final NotificationService notificationService;
 
     @Transactional
+    @SuppressWarnings("null")
     public Shipment createShipmentFromQuote(UUID quoteId, java.time.LocalDate pickupDate) {
         Quote quote = quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new RuntimeException("Quote not found"));
@@ -87,6 +87,7 @@ public class ShipmentService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public void updateStatus(UUID shipmentId, String newStatus, String description, String source) {
         Shipment shipment = shipmentRepository.findById(shipmentId)
                 .orElseThrow(() -> new RuntimeException("Shipment not found"));
@@ -122,7 +123,9 @@ public class ShipmentService {
 
     // Query methods
     public java.util.Optional<Shipment> getShipmentById(UUID shipmentId) {
-        return shipmentRepository.findById(shipmentId);
+        @SuppressWarnings("null")
+        java.util.Optional<Shipment> result = shipmentRepository.findById(shipmentId);
+        return result;
     }
 
     public java.util.Optional<Shipment> getShipmentByTrackingNumber(String trackingNumber) {

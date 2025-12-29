@@ -4,8 +4,8 @@ import com.alphaskyport.iam.model.User;
 import com.alphaskyport.iam.repository.UserRepository;
 import com.alphaskyport.logistics.model.PaymentTransaction;
 import com.alphaskyport.logistics.model.Shipment;
-import com.alphaskyport.logistics.repository.PaymentTransactionRepository;
 import com.alphaskyport.logistics.repository.ShipmentRepository;
+
 import com.alphaskyport.logistics.service.PaymentService;
 import com.alphaskyport.masterdata.model.Country;
 import com.alphaskyport.masterdata.model.FreightService;
@@ -32,8 +32,7 @@ public class PaymentServiceIntegrationTest {
     @Autowired
     private ShipmentRepository shipmentRepository;
 
-    @Autowired
-    private PaymentTransactionRepository paymentTransactionRepository;
+    // unused repo removed
 
     @Autowired
     private UserRepository userRepository;
@@ -61,20 +60,23 @@ public class PaymentServiceIntegrationTest {
         assertNotNull(tx1.getTransactionId());
         assertEquals("completed", tx1.getTransactionStatus());
 
+        @SuppressWarnings("null")
         Shipment updatedShipment = shipmentRepository.findById(shipment.getShipmentId()).orElseThrow();
         assertEquals(0, BigDecimal.valueOf(50).compareTo(updatedShipment.getAmountPaid()));
         assertEquals(0, BigDecimal.valueOf(50).compareTo(updatedShipment.getAmountDue()));
         assertEquals("partial", updatedShipment.getPaymentStatus());
 
         // 2. Full Payment
-        PaymentTransaction tx2 = paymentService.processPayment(
+        paymentService.processPayment(
                 shipment.getShipmentId(),
                 BigDecimal.valueOf(50),
                 "USD",
                 "credit_card",
                 "IDEM-2");
 
-        updatedShipment = shipmentRepository.findById(shipment.getShipmentId()).orElseThrow();
+        @SuppressWarnings("null")
+        Shipment updatedShipment2 = shipmentRepository.findById(shipment.getShipmentId()).orElseThrow();
+        updatedShipment = updatedShipment2;
         assertEquals(0, BigDecimal.valueOf(100).compareTo(updatedShipment.getAmountPaid()));
         assertEquals(0, BigDecimal.valueOf(0).compareTo(updatedShipment.getAmountDue()));
         assertEquals("paid", updatedShipment.getPaymentStatus());
@@ -106,6 +108,7 @@ public class PaymentServiceIntegrationTest {
         assertEquals(tx1.getTransactionId(), tx2.getTransactionId());
 
         // Verify Shipment charged only once
+        @SuppressWarnings("null")
         Shipment updatedShipment = shipmentRepository.findById(shipment.getShipmentId()).orElseThrow();
         assertEquals(0, BigDecimal.valueOf(50).compareTo(updatedShipment.getAmountPaid()));
     }

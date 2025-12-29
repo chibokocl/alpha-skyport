@@ -26,6 +26,7 @@ public class QuoteService {
     private final FreightServiceRepository freightServiceRepository;
 
     @Transactional
+    @SuppressWarnings("null")
     public Quote createQuote(UUID userId, Quote quoteRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -72,6 +73,7 @@ public class QuoteService {
     }
 
     @Transactional
+    @SuppressWarnings("null")
     public Quote acceptQuote(UUID quoteId) {
         Quote quote = quoteRepository.findById(quoteId)
                 .orElseThrow(() -> new RuntimeException("Quote not found"));
