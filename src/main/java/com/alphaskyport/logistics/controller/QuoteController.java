@@ -15,6 +15,7 @@ import java.util.UUID;
 @RequestMapping("/api/quotes")
 @RequiredArgsConstructor
 @Tag(name = "Quotes", description = "Quote management APIs")
+@SuppressWarnings("null")
 public class QuoteController {
 
     private final QuoteRepository quoteRepository;

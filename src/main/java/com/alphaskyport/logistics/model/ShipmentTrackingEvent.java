@@ -2,6 +2,8 @@ package com.alphaskyport.logistics.model;
 
 import com.alphaskyport.masterdata.model.Country;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,6 +15,8 @@ import java.time.LocalDateTime;
 @Table(name = "shipment_tracking_events")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ShipmentTrackingEvent {
 
     @Id
