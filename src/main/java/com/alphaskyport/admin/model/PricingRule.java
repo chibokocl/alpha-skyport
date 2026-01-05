@@ -86,6 +86,8 @@ public class PricingRule {
             case PERCENTAGE -> basePrice.multiply(BigDecimal.ONE.add(adjustmentValue.divide(BigDecimal.valueOf(100))));
             case FIXED -> basePrice.add(adjustmentValue);
             case SET_PRICE -> adjustmentValue;
+            case BASE_RATE_PER_KG -> basePrice; // Not applicable for direct application usually, used in service logic
+            case MULTIPLIER -> basePrice.multiply(adjustmentValue);
         };
     }
 }

@@ -29,6 +29,7 @@ public class PublicSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/shipments/tracking/**").permitAll() // Explicitly allow tracking
+                        .requestMatchers("/api/public/**").permitAll() // Allow public pricing/booking
                         .requestMatchers("/api/shipments/**").authenticated() // Secure other shipment endpoints
                         .anyRequest().authenticated());
 

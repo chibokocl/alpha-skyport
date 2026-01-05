@@ -20,8 +20,11 @@ public class ShipmentService {
 
     private final ShipmentRepository shipmentRepository;
     private final QuoteRepository quoteRepository;
+    private final com.alphaskyport.iam.repository.UserRepository userRepository; // Direct access or via UserService
     private final TrackingNumberRepository trackingNumberRepository;
     private final ShipmentTrackingEventRepository trackingEventRepository;
+    private final com.alphaskyport.masterdata.repository.CountryRepository countryRepository;
+    private final com.alphaskyport.masterdata.repository.FreightServiceRepository freightServiceRepository;
     private final CapacityService capacityService;
     private final NotificationService notificationService;
 
@@ -134,5 +137,92 @@ public class ShipmentService {
 
     public java.util.List<Shipment> getShipmentsByUser(UUID userId) {
         return shipmentRepository.findByUser_UserId(userId);
+    } // Restore closing brace
+
+    @Transactional
+    public Shipment createPublicShipment(
+            String senderName, String senderEmail,
+            String receiverName, String receiverAddress,
+            java.math.BigDecimal weightKg,
+            java.math.BigDecimal lengthCm, java.math.BigDecimal widthCm, java.math.BigDecimal heightCm,
+            java.time.LocalDate pickupDate,
+            String originCountryCode, String destinationCountryCode,
+            java.math.BigDecimal estimatedPrice, String currency) {
+
+        // 1. Get or Create User
+        com.alphaskyport.iam.model.User user = userRepository.findByEmail(senderEmail)
+                .orElseGet(() -> {
+                    com.alphaskyport.iam.model.User newUser = new com.alphaskyport.iam.model.User();
+                    newUser.setEmail(senderEmail);
+                    newUser.setFullName(senderName);
+                    newUser.setPasswordHash("PENDING_ACTIVATION");
+                    newUser.setUserRole(com.alphaskyport.iam.model.UserRole.USER);
+                    newUser.setCreatedAt(java.time.LocalDateTime.now());
+                    newUser.setIsActive(true);
+                    return userRepository.save(newUser);
+                });
+
+        // 2. Generate Tracking
+        String trackingNumber = trackingNumberRepository.generateTrackingNumber();
+
+        // 3. Resolve Countries
+        com.alphaskyport.masterdata.model.Country origin = countryRepository.findByCountryCode(originCountryCode)
+                .orElseThrow(() -> new RuntimeException("Origin country not found: " + originCountryCode));
+
+        com.alphaskyport.masterdata.model.Country destination = countryRepository
+                .findByCountryCode(destinationCountryCode)
+                .orElseThrow(() -> new RuntimeException("Destination country not found: " + destinationCountryCode));
+
+        // 4. Resolve Service (Default to first/main for MVP)
+        com.alphaskyport.masterdata.model.FreightService service = freightServiceRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No freight services available"));
+
+        Shipment shipment = new Shipment();
+        shipment.setTrackingNumber(trackingNumber);
+        shipment.setUser(user);
+        shipment.setService(service);
+        shipment.setOriginCountry(origin);
+        shipment.setDestinationCountry(destination);
+        shipment.setCargoDescription("General Cargo (Public Booking)");
+
+        shipment.setCargoWeight(weightKg);
+        shipment.setCargoWeightUnit("kg");
+
+        // Volumetric Calc (cm3 -> m3)
+        java.math.BigDecimal volume = lengthCm.multiply(widthCm).multiply(heightCm)
+                .divide(java.math.BigDecimal.valueOf(1000000), 4, java.math.RoundingMode.HALF_UP);
+
+        shipment.setCargoVolume(volume);
+        shipment.setCargoVolumeUnit("m3");
+
+        shipment.setTotalCost(estimatedPrice);
+        shipment.setCurrency(currency);
+        shipment.setShipmentStatus("pending");
+        shipment.setEstimatedPickupDate(pickupDate);
+        shipment.setOriginAddress("Origin: " + origin.getCountryName());
+        shipment.setDestinationAddress(receiverAddress + ", " + destination.getCountryName());
+        shipment.setSpecialInstructions("Receiver: " + receiverName);
+
+        // Save
+        shipment = shipmentRepository.save(shipment);
+
+        // Reserve Capacity
+        capacityService.reserveCapacity(shipment);
+
+        // Track
+        createTrackingEvent(shipment, "pending", "Public booking received", "web");
+
+        // Notify
+        try {
+            notificationService.enqueueNotification(
+                    user, shipment, "Booking Confirmed",
+                    "Your shipment " + trackingNumber + " is booked.", "BOOKING_CONFIRMED");
+        } catch (Exception e) {
+            // Log but don't fail booking
+            System.err.println("Failed to enqueue notification: " + e.getMessage());
+        }
+
+        return shipment;
     }
 }
