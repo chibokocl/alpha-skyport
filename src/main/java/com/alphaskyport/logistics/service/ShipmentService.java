@@ -154,11 +154,15 @@ public class ShipmentService {
                 .orElseGet(() -> {
                     com.alphaskyport.iam.model.User newUser = new com.alphaskyport.iam.model.User();
                     newUser.setEmail(senderEmail);
-                    newUser.setFullName(senderName);
+                    // Split name simplistically for MVP
+                    String[] nameParts = senderName.split(" ", 2);
+                    newUser.setFirstName(nameParts[0]);
+                    newUser.setLastName(nameParts.length > 1 ? nameParts[1] : "");
+
                     newUser.setPasswordHash("PENDING_ACTIVATION");
-                    newUser.setUserRole(com.alphaskyport.iam.model.UserRole.USER);
+                    newUser.setUserType("private"); // Replaces UserRole.USER
                     newUser.setCreatedAt(java.time.LocalDateTime.now());
-                    newUser.setIsActive(true);
+                    newUser.setActive(true); // Lombok generates setActive for boolean isActive
                     return userRepository.save(newUser);
                 });
 
