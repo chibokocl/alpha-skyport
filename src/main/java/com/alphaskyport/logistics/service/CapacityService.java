@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,28 +24,14 @@ public class CapacityService {
      * Checks if there is sufficient capacity for a shipment on a given date.
      */
     @Transactional(readOnly = true)
-    public boolean checkAvailability(LocalDate date, UUID serviceId, BigDecimal weightKg, BigDecimal volumeM3) {
+    public boolean checkAvailability(LocalDate date, Integer serviceId, BigDecimal weightKg, BigDecimal volumeM3) {
         if (serviceId == null || date == null) {
             return true; // Assume available if generic check
         }
 
         // Check if a specific constraint exists
         return capacityBookingRepository
-                .findByService_ServiceIdAndBookingDate(1, date) // TODO: Fix serviceId type (Integer vs UUID) - entity
-                                                                // uses Integer for ServiceId?
-                // In CapacityBooking: private FreightService service; -> FreightService usually
-                // has Integer ID?
-                // Let's check FreightService model or assume Integer based on "1" usage in
-                // other files or just pass Integer.
-
-                // Wait, looking at V3 SQL: service_id INTEGER NOT NULL.
-                // So serviceId should be Integer.
-
-                // Let's defer to repository logic.
-                // findByService_ServiceIdAndBookingDate expect (Integer, LocalDate).
-
-                // Refetch generic check:
-                // For MVP, if no booking record, it's open.
+                .findByService_ServiceIdAndBookingDate(serviceId, date)
                 .map(booking -> {
                     BigDecimal newTotalWeight = booking.getReservedWeightKg()
                             .add(weightKg != null ? weightKg : BigDecimal.ZERO);
