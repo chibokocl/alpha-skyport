@@ -10,15 +10,21 @@ VALUES
 ON CONFLICT (country_code) DO NOTHING;
 
 -- Refresh materialized view for countries if needed (manual refresh usually)
-REFRESH MATERIALIZED VIEW active_countries;
+-- REFRESH MATERIALIZED VIEW active_countries; -- View does not exist, removing.
+
+-- 1b. Create Partitions for 2026 (Required since current date is 2026)
+CREATE TABLE IF NOT EXISTS shipment_tracking_events_2026_01 PARTITION OF shipment_tracking_events FOR VALUES FROM ('2026-01-01') TO ('2026-02-01');
+CREATE TABLE IF NOT EXISTS shipment_tracking_events_2026_02 PARTITION OF shipment_tracking_events FOR VALUES FROM ('2026-02-01') TO ('2026-03-01');
+CREATE TABLE IF NOT EXISTS shipment_tracking_events_2026_03 PARTITION OF shipment_tracking_events FOR VALUES FROM ('2026-03-01') TO ('2026-04-01');
+-- Add more if needed, covering Q1 2026 for now
+
 
 -- 2. Ensure Service exists
 INSERT INTO freight_services (service_name, service_type, description, base_rate, estimated_days_min, estimated_days_max)
-VALUES 
-    ('Standard Air Freight', 'air', 'Reliable air cargo service', 5.50, 3, 5),
-    ('Express Ocean', 'sea', 'Fast sea freight', 1.20, 15, 20)
-ON CONFLICT (service_id) DO NOTHING; 
--- Note: serial ID might differ, we'll subselect below
+SELECT 'Standard Air Freight', 'air', 'Reliable air cargo service', 5.50, 3, 5
+WHERE NOT EXISTS (
+    SELECT 1 FROM freight_services WHERE service_name = 'Standard Air Freight'
+);
 
 -- 3. Create a Mock Customer User
 INSERT INTO users (
@@ -26,7 +32,7 @@ INSERT INTO users (
     phone, country_code, is_verified, is_active
 ) VALUES (
     'customer@example.com', 
-    '$2b$12$.8kbf7C6jfA61lf8jLB3reyKomGLLvorVymRQdvHCuh6n2vU9RmOa', -- 'admin123' (reused hash for simplicity)
+    '$2b$12$.8kbf7C6jfA61lf8jLB3reyKomGLLvorVymRQdvHCuh6n2vU9RmOa', -- 'admin123'
     'business', 
     'John', 'Doe', 'Doe Logistics Ltd', 
     '+15550192834', 'US', true, true

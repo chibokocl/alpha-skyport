@@ -3,6 +3,7 @@ package com.alphaskyport.logistics.model;
 import com.alphaskyport.iam.model.User;
 import com.alphaskyport.masterdata.model.Country;
 import com.alphaskyport.masterdata.model.FreightService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,22 +31,27 @@ public class Shipment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private Quote quote;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private FreightService service;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "origin_country_id", nullable = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private Country originCountry;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_country_id", nullable = false)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private Country destinationCountry;
 
     @Column(name = "origin_address", columnDefinition = "TEXT")
