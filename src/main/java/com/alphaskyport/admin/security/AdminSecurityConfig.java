@@ -64,8 +64,14 @@ public class AdminSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration
-                .setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:5174"));
+        List<String> allowedOrigins = new java.util.ArrayList<>(
+                List.of("http://localhost:3000", "http://localhost:5173", "http://localhost:5174",
+                        "https://alpha-skyport-fe-production.up.railway.app"));
+        String envAllowedOrigins = System.getenv("ADMIN_CORS_ALLOWED_ORIGINS");
+        if (envAllowedOrigins != null && !envAllowedOrigins.isBlank()) {
+            allowedOrigins.addAll(Arrays.asList(envAllowedOrigins.split(",")));
+        }
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Authorization"));
